@@ -1,0 +1,102 @@
+package db.mysql;
+
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Connection;
+
+
+public class MySQLTableCreation {
+	
+	public static void main(String[] args) {
+		try {
+			// Step 1 Connect to MySQL.
+			System.out.println("Connecting to " + MySQLDBUtil.URL);
+			Class.forName("com.mysql.cj.jdbc.Driver").getConstructor().newInstance();
+			Connection conn = DriverManager.getConnection(MySQLDBUtil.URL);
+			                  
+			if (conn == null) {
+				return;
+			}
+			
+			// Step 2 Drop tables in case they exist.	
+			Statement stmt = conn.createStatement();
+			String sql = "DROP TABLE IF EXISTS itinerary_stop";
+			stmt.executeUpdate(sql);
+			
+			sql = "DROP TABLE IF EXISTS place";
+			stmt.executeUpdate(sql);
+			
+			sql = "DROP TABLE IF EXISTS itinerary";
+			stmt.executeUpdate(sql);
+			
+			sql = "DROP TABLE IF EXISTS users";
+			stmt.executeUpdate(sql);
+			
+			
+
+
+			// Step 3 Create new tables
+			sql = "CREATE TABLE place ("
+					+ "place_id VARCHAR(255) NOT NULL,"
+					+ "place_name VARCHAR(255),"
+					+ "address VARCHAR(255),"
+					+ "image_url VARCHAR(255),"
+					+ "comments TEXT,"
+					+ "distance FLOAT,"
+					+ "latitude FLOAT,"
+					+ "longitude FLOAT,"
+					+ "PRIMARY KEY (place_id)"
+					+ ")";
+			stmt.executeUpdate(sql);
+			
+			sql = "CREATE TABLE users ("
+					+ "user_id VARCHAR(255) NOT NULL,"
+					+ "user_password VARCHAR(255) NOT NULL,"
+					+ "first_name VARCHAR(255),"
+					+ "last_name VARCHAR(255),"
+					+ "gender ENUM('M','F'),"
+					+ "phone CHAR(10),"
+					+ "PRIMARY KEY (user_id)"
+					+ ")";
+			stmt.executeUpdate(sql);
+			
+			sql = "CREATE TABLE itinerary ("
+					+ "itinerary_id VARCHAR(255) NOT NULL,"
+					+ "user_id VARCHAR(255) NOT NULL,"
+					+ "itinerary_name VARCHAR(255),"
+					+ "start_date DATE,"
+					+ "end_date DATE,"
+					+ "PRIMARY KEY (itinerary_id),"
+					+ "FOREIGN KEY (user_id) REFERENCES users(user_id)"
+					+ ")";
+			stmt.executeUpdate(sql);
+			
+			sql = "CREATE TABLE itinerary_stop ("
+					+ "itinerary_id VARCHAR(255) NOT NULL,"
+					+ "sequence_id VARCHAR(255) NOT NULL,"
+					+ "place_id VARCHAR(255) NOT NULL,"
+					+ "itinerary_stop_name VARCHAR(255),"
+					+ "start_date_andTime DATETIME,"
+					+ "end_date_andTime DATETIME,"
+					+ "created_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,"
+					+ "PRIMARY KEY (itinerary_id, sequence_id),"
+					+ "FOREIGN KEY (itinerary_id) REFERENCES itinerary(itinerary_id),"
+					+ "FOREIGN KEY (place_id) REFERENCES place(place_id)"
+					+ ")";
+			stmt.executeUpdate(sql);
+      
+						// Step 4: insert fake user 1111/3229c1097c00d497a0fd282d586be050
+						sql = "INSERT INTO users VALUES ('1111', '3229c1097c00d497a0fd282d586be050', 'John', 'Smith')";
+						stmt.executeUpdate(sql);
+						
+
+			
+			System.out.println("Import done successfully");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+}
+
