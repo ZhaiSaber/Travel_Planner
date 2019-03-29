@@ -1,0 +1,79 @@
+#recommend {
+}
+
+#recommendTitle {
+    min-width: 300px;
+}
+
+.recommendCategory {
+    min-width: 50px;
+}
+
+.recommendCategoryList {
+    max-height: 500px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.recommendCategoryListItem {
+    height: 75px;
+}
+
+.recommendCategoryListItemImg {
+    width: 100px;
+    height: 100%;
+    text-align: center;
+    vertical-align: top;
+    display: inline-block;
+    overflow: hidden;
+}
+
+.recommendCategoryListItemImg img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: none;
+}
+
+.recommendCatogoryListItemNameAndRating {
+    width: 150px;
+    height: 100%;
+    vertical-align: top;
+    display: inline-block;
+}
+
+.recommendCategoryListItemName {
+    height: 60%;
+    max-width: 150px;
+    margin: 5px 5px 5px 5px;
+}
+
+.recommendCategoryListItemRating {
+    height: 40%;
+    max-width: 150px;
+    margin: 5px 5px 5px 5px;
+}
+
+.recommendCategoryListItemBtnAddToPlan {
+    width: 30px;
+    height: 100%;
+    vertical-align: center;
+    display: inline-block;
+}
+
+.btnAddToPlan {
+    font-size: 1em; 
+    color: blue;
+}
+
+.btnLinkToWebsite {
+    font-size: 1em; 
+    color: blue;
+}
+
+.recommendCategoryListItemBtnLinkToWebsite {
+    width: 30px;
+    height: 100%;
+    vertical-align: center;
+    display: inline-block;
+}

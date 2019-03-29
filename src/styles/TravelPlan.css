@@ -1,0 +1,75 @@
+#travelPlan {
+}
+#travelPlanTitle {
+
+}
+#travelPlanTitleSelect {
+    width: 70%;
+    display: inline-block;
+    vertical-align: center;
+}
+#travelPlanCalendar {
+    width: 10%;
+    display: inline-block;
+    vertical-align: center;
+    font-size: 1em;
+    color: blue;
+}
+#btnTravelPlanCalendar {
+    font-size: 1em;
+    color: Tomato;
+}
+#travelPlanCreate {
+    width: 10%;
+    display: inline-block;
+    vertical-align: center;
+}
+#btnTravelPlanCreate {
+    font-size: 1em;
+    color: blue;
+}
+#travelPlanDelete {
+    width: 10%;
+    display: inline-block;
+    vertical-align: center;
+}
+#btnTravelPlanDelete {
+    font-size: 1em;
+    color: blue;
+}
+#travelPlanList {
+    display: flex;
+    flex-direction: column;
+}
+.travelPlanItem {
+    border-color: gray;
+    border-top: 1px;
+}
+.travelPlanItemNameAndDuration {
+    height: 100%;
+    display: inline-block;
+}
+.travelPlanItemName {
+    height: 60%;
+}
+.travelPlanItemDuration {
+    height: 40%;
+}
+.btnItemMoveUp {
+    height: 100%;
+    display: inline-block;
+    font-size: 1em;
+    color: blue;
+}
+.btnItemMoveDown {
+    height: 100%;
+    display: inline-block;
+    font-size: 1em;
+    color: blue;
+}
+.btnItemDelete {
+    height: 100%;
+    display: inline-block;
+    font-size: 1em;
+    color: blue;
+}
