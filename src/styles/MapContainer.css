@@ -1,0 +1,18 @@
+/* #map {
+  max-width: 500px;
+  background: blue;
+    width: 50%;
+    height: 50%;
+    width: inherit;
+    overflow: hidden;
+  }
+#map div {
+  width: inherit;
+}
+.mapp {
+  position: relative;
+  display: block;
+  background: blue;
+  //width:  !important; 
+  //height: 60% !important;
+} */

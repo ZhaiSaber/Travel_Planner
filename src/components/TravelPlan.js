@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Icon } from 'antd';
+import { Icon, Button } from 'antd';
 import '../styles/TravelPlan.css';
 
 export default class TravelPlan extends React.Component {
@@ -18,6 +18,9 @@ export default class TravelPlan extends React.Component {
                 {/* <TravelPlanDayNav /> */}
                 <TravelPlanList
                     currentTravelPlan={this.props.currentTravelPlan}
+                    App={this.props.App}
+                />
+                <TravelPlanButton
                     App={this.props.App}
                 />
             </div>
@@ -45,9 +48,9 @@ class TravelPlanTitle extends React.Component {
                 </div>
                 <TravelPlanCalendarBtn
                     App={this.props.App} />
-                <TravelPlanCreateBtn 
+                <TravelPlanCreateBtn
                     App={this.props.App} />
-                <TravelPlanDeleteBtn 
+                <TravelPlanDeleteBtn
                     App={this.props.App} />
             </div>
         );
@@ -72,7 +75,7 @@ class TravelPlanCreateBtn extends React.Component {
         const App = this.props.App;
         return (
             <div id='travelPlanCreate'>
-                <button onClick={() => {App.showTravelPlanCreate()}}>
+                <button onClick={() => { App.showTravelPlanCreate() }}>
                     <Icon type="plus" className="btnTravelPlanCreate" />
                 </button>
             </div>
@@ -85,7 +88,7 @@ class TravelPlanDeleteBtn extends React.Component {
         const App = this.props.App;
         return (
             <div id='travelPlanDelete'>
-                <button onClick={() => {App.showTravelPlanDelete()}}>
+                <button onClick={() => { App.showTravelPlanDelete() }}>
                     <Icon type="delete" className="btnTravelPlanDelete" />
                 </button>
             </div>
@@ -135,15 +138,29 @@ class TravelPlanListItem extends React.Component {
                     <div className='travelPlanItemName'>{this.props.place.name}</div>
                     <div className='travelPlanItemDuration'>{this.props.place.duration / 60 + ' min'}</div>
                 </div>
-                <button className="btnItemMoveUp" onClick={() => { App.movePlaceInTravelPlan(this.props.place.placeId, -1) }} >
-                    <Icon type="up-circle" />
-                </button>
-                <button className="btnItemMoveDown" onClick={() => { App.movePlaceInTravelPlan(this.props.place.placeId, 1) }} >
-                    <Icon type="down-circle" />
-                </button>
-                <button className="btnItemDelete" onClick={() => { App.deleteFromTravelPlan(this.props.place.placeId) }}>
-                    <Icon type="close-circle" />
-                </button>
+                <div className='travelPlanItemBtn'>
+                    <button className="btnItemMoveUp" onClick={() => { App.movePlaceInTravelPlan(this.props.place.placeId, -1) }} >
+                        <Icon type="up-circle" />
+                    </button>
+                    <button className="btnItemMoveDown" onClick={() => { App.movePlaceInTravelPlan(this.props.place.placeId, 1) }} >
+                        <Icon type="down-circle" />
+                    </button>
+                    <button className="btnItemDelete" onClick={() => { App.deleteFromTravelPlan(this.props.place.placeId) }}>
+                        <Icon type="close-circle" />
+                    </button>
+                </div>
+            </div>
+        );
+    }
+}
+
+class TravelPlanButton extends React.Component {
+    render() {
+        const App = this.props.App;
+        return (
+            <div className="travelPlanButton">
+                <Button type='primary'>Optimize</Button>
+                <Button>Save</Button>
             </div>
         );
     }

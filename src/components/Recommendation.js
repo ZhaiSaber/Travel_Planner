@@ -3,8 +3,6 @@ import { Icon } from 'antd';
 import '../styles/Recommendation.css';
 import { getRecommendationByCategory } from './Endpoint';
 
-import { createMarkerAt, removeMarkers } from './MapContainer';
-
 export default class Recommendation extends React.Component {
     constructor(props) {
         super(props);
@@ -105,6 +103,7 @@ class RecommendCategoryList extends React.Component {
                             placeId={item.placeId}
                             lat={item.lat}
                             lng={item.lng}
+                            address={item.address}
                             imgUrl={item.imgUrl}
                             name={item.name}
                             rating={item.rating}
@@ -138,7 +137,16 @@ class RecommendCategoryListItem extends React.Component {
                     <img src={this.props.imgUrl} />
                 </div>
                 <div className='recommendCatogoryListItemNameAndRating'>
-                    <div className='recommendCategoryListItemName' onClick={() => { App.createMarkerAt(this.props.lat, this.props.lng); }}>
+                    <div className='recommendCategoryListItemName'
+                        onClick={() => {
+                            App.createMarkerAt(
+                                this.props.placeId,
+                                this.props.name,
+                                this.props.lat,
+                                this.props.lng,
+                                this.props.address,
+                                this.props.imgUrl);
+                        }}>
                         {this.props.name}
                     </div>
                     <div className='recommendCategoryListItemRating'>

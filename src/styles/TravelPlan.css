@@ -44,32 +44,47 @@
 .travelPlanItem {
     border-color: gray;
     border-top: 1px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding-left: 10px;
+    height: 50px;
 }
 .travelPlanItemNameAndDuration {
     height: 100%;
     display: inline-block;
+    vertical-align: top;
 }
 .travelPlanItemName {
     height: 60%;
+    vertical-align: text-bottom;
 }
 .travelPlanItemDuration {
     height: 40%;
+    vertical-align: text-bottom;
+}
+.travelPlanItemBtn {
+    height: 100%;
+    display: inline-block;
+    vertical-align: top;
 }
 .btnItemMoveUp {
     height: 100%;
     display: inline-block;
     font-size: 1em;
     color: blue;
+    margin-right: 5px;
 }
 .btnItemMoveDown {
     height: 100%;
     display: inline-block;
     font-size: 1em;
     color: blue;
+    margin-right: 5px;
 }
 .btnItemDelete {
     height: 100%;
     display: inline-block;
     font-size: 1em;
     color: blue;
+    margin-right: 5px;
 }

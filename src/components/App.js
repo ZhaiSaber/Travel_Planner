@@ -1,12 +1,16 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import logo from '../assets/images/logo.svg';
 import '../styles/App.css';
 import MapContainer from './MapContainer';
 import TravelPlan from './TravelPlan';
 import Recommendation from './Recommendation';
+import Header from './Header';
 import TravelPlanCalendar from './TravelPlanCalendar';
-import { message, Modal } from 'antd';
+import { message, Modal, Input } from 'antd';
 import TravelPlanCreate from './TravelPlanCreate';
+import { TOKEN_KEY } from './constants';
+import { getRecommendationByCategory } from './Endpoint';
 
 class App extends Component {
 
@@ -66,6 +70,42 @@ class App extends Component {
     var calendarVisible = false;
     var createTravelPlanVisible = false;
     var deleteTravelPlanVisible = false;
+    var markers = [
+      // {
+      //   placeId: "id1",
+      //   name: "Venice Beach",
+      //   lat: 34.0087686,
+      //   lng: -118.5000063,
+      //   address: "1000 ABC Ave, LA, CA 95000",
+      //   imgUrl: "https://lh5.googleusercontent.com/p/AF1QipP0mlxIkwrRtFcxkytXEHrxELz91EsZwTSH7-Na=w408-h544-k-no",
+      //   duration: 3600,
+      // },
+      // {
+      //   placeId: "id2",
+      //   name: "The Getty",
+      //   lat: 34.0619951,
+      //   lng: -118.5369877,
+      //   address: "1000 ABC Ave, LA, CA 95000",
+      //   imgUrl: "https://lh5.googleusercontent.com/p/AF1QipOe-Wj4utK3Xa5KIHD3zHKmtnj3GqGNpy2MZwpU=w408-h306-k-no",
+      //   duration: 3600
+      // },
+      // {
+      //   placeId: "id3",
+      //   name: "Griffith Observatory",
+      //   lat: 34.1184341,
+      //   lng: -118.3025822,
+      //   address: "1000 ABC Ave, LA, CA 95000",
+      //   imgUrl: "https://lh5.googleusercontent.com/p/AF1QipMxx2EwT-isCRsWt_UP5gGZvrLb44-0980J2tbG=w408-h229-k-no",
+      //   duration: 3600
+      // }
+    ];
+    var activeMarkers = [
+    ]
+    var map;
+    var showingInfoWindow = false;
+    var activeMarker = {};
+    var selectedPlace = {};
+    var isLoggedIn = Boolean(localStorage.getItem(TOKEN_KEY));
     this.state = {
       allTravelPlan,
       currentTravelPlan,
@@ -73,7 +113,23 @@ class App extends Component {
       calendarVisible,
       createTravelPlanVisible,
       deleteTravelPlanVisible,
+      markers: getRecommendationByCategory("").items,
+      activeMarkers,
+      showingInfoWindow,
+      activeMarker,
+      selectedPlace,
+      isLoggedIn,
     };
+  }
+
+  handleLogin = (token) => {
+    localStorage.setItem(TOKEN_KEY, token);
+    this.setState({ isLoggedIn: true });
+  }
+
+  handleLogout = () => {
+    localStorage.removeItem(TOKEN_KEY);
+    this.setState({ isLoggedIn: false });
   }
 
   createTravelPlan = (userId, name) => {
@@ -105,8 +161,8 @@ class App extends Component {
       var swappedPlace = newTravelPlan.places[index];
       newTravelPlan.places[index] = newTravelPlan.places[index + offset];
       newTravelPlan.places[index + offset] = swappedPlace;
-      return ({ currentTravelPlan : newTravelPlan});
-    }, () => { message.success("Successfully moved the place in the travel plan.")});
+      return ({ currentTravelPlan: newTravelPlan });
+    }, () => { message.success("Successfully moved the place in the travel plan.") });
   }
   deleteFromTravelPlan = (placeId) => {
     const newPlaces = [];
@@ -118,10 +174,11 @@ class App extends Component {
     this.setState((prevState) => {
       const newTravelPlan = Object.assign({}, prevState.currentTravelPlan);
       newTravelPlan.places = newPlaces;
-      return ({ currentTravelPlan : newTravelPlan});
-    }, () => { message.success("Successfully removed from the travel plan.")});
+      return ({ currentTravelPlan: newTravelPlan });
+    }, () => { message.success("Successfully removed from the travel plan.") });
   }
   addToTravelPlan = (placeId) => {
+    console.log("Add to plan " + placeId);
     for (var i = 0; i < this.state.currentTravelPlan.places.length; i++) {
       if (placeId === this.state.currentTravelPlan.places[i].placeId) {
         message.warn("This place is already in your travel plan.");
@@ -136,8 +193,8 @@ class App extends Component {
     this.setState((prevState) => {
       const newTravelPlan = Object.assign({}, prevState.currentTravelPlan);
       newTravelPlan.places.push(jsonRsp);
-      return ({currentTravelPlan : newTravelPlan});
-    }, () => {message.success("Successfully added to the travel plan.")});
+      return ({ currentTravelPlan: newTravelPlan });
+    }, () => { message.success("Successfully added to the travel plan.") });
   }
 
   showTravelPlanCalendar = () => {
@@ -151,9 +208,9 @@ class App extends Component {
       const newTravelPlan = Object.assign({}, prevState.currentTravelPlan);
       newTravelPlan.startDate = startDate;
       newTravelPlan.endDate = endDate;
-      return ( {
-        calendarVisible : false,
-        currentTravelPlan : newTravelPlan,
+      return ({
+        calendarVisible: false,
+        currentTravelPlan: newTravelPlan,
       });
     });
   }
@@ -161,7 +218,7 @@ class App extends Component {
   handleTravelPlanCalendarCancel = () => {
     this.setState({
       calendarVisible: false,
-    }); 
+    });
   }
 
   showTravelPlanCreate = () => {
@@ -209,49 +266,128 @@ class App extends Component {
     //TODO
   }
 
+  createMarkerAt = (placeId, name, lat, lng, address, imgUrl) => {
+    const newMarkers = this.state.markers.slice();
+    const newMarker = {
+      placeId,
+      name,
+      lat,
+      lng,
+      address,
+      imgUrl,
+      duration: 0
+    }
+    for (var i = 0; i < newMarkers.length; i++) {
+      if (newMarkers[i].placeId == newMarker.placeId) {
+        return false;
+      }
+    }
+    console.log(newMarkers);
+    console.log(newMarker);
+    newMarkers.push(newMarker);
+    this.setState({
+      markers: newMarkers,
+    });
+  }
+
+  removeAllMarkers = () => {
+    // for (var i = 0; i < markers.length; i++) {
+    //     markers[i].setMap(null);
+    // }
+  }
+
+  onMarkerClick = (props, marker, e) => {
+    console.log("OnMarkerClick");
+    this.setState({
+      selectedPlace: props,
+      activeMarker: marker,
+      showingInfoWindow: true
+    },
+      console.log(props));
+  }
+
+  onMapClick = (props) => {
+    if (this.state.showingInfoWindow) {
+      this.setState({
+        showingInfoWindow: false,
+        activeMarker: null
+      });
+    }
+  }
+
+  onInfoWindowOpen = (props, e) => {
+    const button = (
+      <button
+        onClick={e => { this.addToTravelPlan(this.state.selectedPlace.placeId) }}
+      >
+        Add to plan
+      </button>
+    );
+    ReactDOM.render(React.Children.only(button), document.getElementById("infoWindow"));
+  }
+  onInfoWindowClose = () =>
+    this.setState({
+      activeMarker: null,
+      showingInfoWindow: false
+    });
+
   render() {
     return (
       <div id="App">
-        {/* <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header> */}
-        <MapContainer />
-        <div id="panel">
-          <TravelPlan 
-            allTravelPlan={this.state.allTravelPlan} 
-            currentTravelPlan={this.state.currentTravelPlan} 
-            currentTravelPlanIndex={this.state.currentTravelPlanIndex} 
+        <div id="panelContainer">
+        {this.state.isLoggedIn ? 
+          <TravelPlan
+            allTravelPlan={this.state.allTravelPlan}
+            currentTravelPlan={this.state.currentTravelPlan}
+            currentTravelPlanIndex={this.state.currentTravelPlanIndex}
             App={this}
-            />
-          <Recommendation 
-            recommendations={this.state.recommendations} 
-            App={this} 
-            />
-          {this.state.calendarVisible ? 
+          /> : null}
+          <Recommendation
+            recommendations={this.state.recommendations}
+            App={this}
+          />
+          {this.state.calendarVisible ?
             <TravelPlanCalendar
               visible={this.state.calendarVisible}
               startDate={this.state.currentTravelPlan.startDate}
               endDate={this.state.currentTravelPlan.endDate}
               App={this}
-              /> : null
-            }
-          {this.state.createTravelPlanVisible ? 
+            /> : null
+          }
+          {this.state.createTravelPlanVisible ?
             <TravelPlanCreate
               visible={this.state.createTravelPlanVisible}
               App={this}
-              /> : null
-            }
+            /> : null
+          }
+        </div>
+        <div id="mapContainer">
+          <div id="headerContainer">
+            <Header
+              isLoggedIn={this.state.isLoggedIn}
+              handleLogout={this.handleLogout}
+              handleLogin={this.handleLogin}
+              showLoginModal={this.showLoginModal}
+              showRegisterModal={this.showRegisterModal}
+            />
+          </div>
+          <div id="map">
+            <MapContainer
+              markers={this.state.markers}
+              showingInfoWindow={this.state.showingInfoWindow}
+              activeMarker={this.state.activeMarker}
+              selectedPlace={this.state.selectedPlace}
+              App={this}
+            />
+          </div>
+          <div id="searchbarContainer">
+            <Input.Search
+              className="searchbar"
+              placeholder="type in place name"
+              onSearch={value => message.info(value)}
+              enterButton
+            />
+          </div>
         </div>
       </div>
     );
@@ -259,6 +395,13 @@ class App extends Component {
 }
 
 export default App;
+
+
+
+
+
+
+
 
 function getPlaceInfoFromServer(placeId) {
   return (
