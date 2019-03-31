@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Fetch_Test</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.4.2/react.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.4.2/react-dom.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.21.1/babel.min.js"></script>
+  <!-- https://reactjs.org/docs/add-react-to-a-website.html-->
+  <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+  <!-- Don't use this in production: -->
+  <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+const API_ROOT = "http://18.222.12.252/TravelPlanner/PlanRoute";
+const test_object = 
+{
+  itineraryId: "a",
+  name: "plan to LA",
+  startDate: "2019-03-10",
+  endDate: "2019-03-12",
+  generateRoute: true,
+  places: [
+    {
+        "imagUrl": "https://media-cdn.tripadvisor.com/media/photo-s/12/47/97/ec/parc-disneyland.jpg",
+        "address": "1313 Disneyland Dr, Anaheim, CA 92802, USA",
+        "lng": -117.9189742,
+        "placeId": "Disney",
+        "name": "Disneyland Park",
+        "lat": 33.8120918
+    },
+    {
+        "imagUrl": "https://media.timeout.com/images/100541963/image.jpg",
+        "address": "100 Universal City Plaza, Universal City, CA 91608, USA",
+        "lng": -118.3533783,
+        "placeId": "Universal",
+        "name": "Universal Studios Hollywood",
+        "lat": 34.13811680000001
+    }
+  ]
+}
+
+class Save_ extends React.Component {
+
+  constructor(props){
+    super(props);
+    this.onClick_Save = this.onClick_Save.bind(this);
+    //this.onClick_Confirm = this.onClick_Confirm.bind(this);
+    this.state = {
+      //places_state: [],
+      //duration_state:[]
+    }
+  }
+
+  onClick_Save() {
+    console.log('onClick_Save()');
+    var update_plases= this.handleSave(test_object);
+    console.log('finish_onClick_Save()');
+    //this.setState();
+  }
+
+  handleSave(e){
+    console.log('handleSave()');
+    fetch(`${API_ROOT}`, {
+          mode: "no-cors",
+          method: 'POST',
+          headers: {
+            //'Access-Control-Allow-Origin': '*' ,
+            //'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            //'Origin': '',
+            //'Host': 'api.producthunt.com'
+          },
+          body: JSON.stringify({
+            //username: values.username,
+            //password: values.password,
+            e
+          }),
+    }).then(response => {
+            if (response.ok) {
+              console.log('handleSave()_response');
+              console.log(response.json());
+              return response.json();
+            }else{
+              console.log('response not ok.');
+              console.log(response.statusText);
+            }
+            //throw new Error(response.statusText);
+        });
+   }
+  
+  render() {
+        return (
+          <div>
+            {console.log('render()')}
+            <button onClick={this.onClick_Save}>Save</button>
+            
+          </div>
+        );
+    }
+    
+}
+//<button onClick={this.onClick_Confirm}>Confirm</button>    
+
+//     updateFrontEndPlan = (props) =>{
+
+//     }
+
+//     save = (props) =>{
+//         formatBackEndPlan();
+//         fetchPlan();
+
+        
+//         return (
+//             <ul>
+//               {fetchPlan() && fetchPlan().text.length > 0 ?
+//                 updateFrontEndPlan() : ''}
+//             </ul>
+//           );
+//     } 
+
+//     componentDidMount() {
+      
+//       setInterval(
+//         () => this.tick(),
+//         1000
+//       );
+//     }
+  
+//     componentWillUnmount() {
+//       clearInterval(this.timerID);
+//     }<button onClick={this.onClick}>Save</button>
+  
+
+ReactDOM.render(
+  <Save_/>,
+  document.getElementById('root')
+)
+ </script>
+</body>
+
+</html>
